@@ -7,15 +7,17 @@ class SimpleTokenizer:
     
     def encode(self, text):
         preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', text)
-                                
+        preprocessed = [item.strip() for item in preprocessed if item.strip()]
         preprocessed = [
-            item.strip() for item in preprocessed if item.strip()
+            item if item in self.str_to_int 
+            else "<|unk|>" for item in preprocessed
         ]
+
         ids = [self.str_to_int[s] for s in preprocessed]
         return ids
         
     def decode(self, ids):
         text = " ".join([self.int_to_str[i] for i in ids])
         # Replace spaces before the specified punctuations
-        text = re.sub(r'\s+([,.?!"()\'])', r'\1', text)
+        text = re.sub(r'\s+([,.:;?!"()\'])', r'\1', text)
         return text
